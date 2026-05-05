@@ -1,0 +1,189 @@
+@model BookExchange.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Prijava";
+}
+
+<style>
+    .login-page {
+        min-height: calc(100vh - 130px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        background: linear-gradient(160deg, #FAF6F1 0%, #EDE0CC 100%);
+    }
+
+    .login-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 10px 48px rgba(44, 26, 14, 0.13);
+        padding: 2.75rem 2.5rem;
+        width: 100%;
+        max-width: 420px;
+        border-top: 5px solid #6B3A2A;
+    }
+
+    .login-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #6B3A2A 0%, #C8956C 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 4px 16px rgba(107,58,42,0.25);
+    }
+
+    .login-title {
+        color: #2C1A0E;
+        font-size: 1.55rem;
+        text-align: center;
+        margin-bottom: 0.3rem;
+        font-weight: bold;
+    }
+
+    .login-subtitle {
+        color: #8B7355;
+        text-align: center;
+        font-size: 0.875rem;
+        margin-bottom: 2rem;
+        font-family: sans-serif;
+    }
+
+    .be-label {
+        color: #4A2E1A;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        font-family: sans-serif;
+        display: block;
+    }
+
+    .be-input {
+        width: 100%;
+        border: 1.5px solid #E0CDB5;
+        border-radius: 9px;
+        padding: 0.65rem 1rem;
+        font-size: 0.95rem;
+        background-color: #FDFAF7;
+        color: #2C1A0E;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        font-family: sans-serif;
+        box-sizing: border-box;
+    }
+
+    .be-input:focus {
+        border-color: #6B3A2A;
+        box-shadow: 0 0 0 3px rgba(107, 58, 42, 0.1);
+        background-color: #fff;
+        outline: none;
+    }
+
+    .be-input::placeholder { color: #BBA98A; }
+
+    .be-input.input-error { border-color: #D9534F; }
+
+    .field-error {
+        color: #C0392B;
+        font-size: 0.78rem;
+        margin-top: 0.3rem;
+        font-family: sans-serif;
+        display: block;
+    }
+
+    .alert-error {
+        background-color: #FFF1F0;
+        border: 1px solid #FFCAC8;
+        border-radius: 9px;
+        color: #B03030;
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+        margin-bottom: 1.25rem;
+        font-family: sans-serif;
+    }
+
+    .alert-error ul { margin: 0; padding-left: 1.1rem; }
+
+    .btn-submit {
+        width: 100%;
+        background: linear-gradient(135deg, #6B3A2A, #8B4C35);
+        border: none;
+        border-radius: 9px;
+        color: white;
+        padding: 0.78rem;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: sans-serif;
+        margin-top: 0.5rem;
+    }
+
+    .btn-submit:hover {
+        background: linear-gradient(135deg, #5A2F20, #7A3D27);
+        transform: translateY(-1px);
+        box-shadow: 0 5px 16px rgba(107, 58, 42, 0.3);
+    }
+
+    .card-divider {
+        border: none;
+        border-top: 1px solid #EDE0CC;
+        margin: 1.75rem 0 1.5rem;
+    }
+
+    .register-prompt {
+        text-align: center;
+        color: #8B7355;
+        font-size: 0.875rem;
+        font-family: sans-serif;
+    }
+
+    .register-prompt a {
+        color: #6B3A2A;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .register-prompt a:hover { text-decoration: underline; }
+</style>
+
+<div class="login-page">
+    <div class="login-card">
+        <div class="login-icon">&#128214;</div>
+        <h1 class="login-title">Dobrodošao nazad</h1>
+        <p class="login-subtitle">Prijavi se na svoj BookExchange nalog</p>
+
+        <div asp-validation-summary="All" class="alert-error"></div>
+
+        <form asp-action="Login" method="post" novalidate>
+
+            <div style="margin-bottom:1.1rem">
+                <label asp-for="Email" class="be-label">Email adresa</label>
+                <input asp-for="Email" class="be-input" placeholder="tvoj@email.com" autocomplete="email" />
+                <span asp-validation-for="Email" class="field-error"></span>
+            </div>
+
+            <div style="margin-bottom:1.5rem">
+                <label asp-for="Lozinka" class="be-label">Lozinka</label>
+                <input asp-for="Lozinka" type="password" class="be-input" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password" />
+                <span asp-validation-for="Lozinka" class="field-error"></span>
+            </div>
+
+            <button type="submit" class="btn-submit">Prijavi se</button>
+        </form>
+
+        <hr class="card-divider" />
+
+        <p class="register-prompt">
+            Nemaš nalog? <a asp-action="Register">Registruj se besplatno</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

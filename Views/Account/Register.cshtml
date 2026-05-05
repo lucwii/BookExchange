@@ -1,0 +1,345 @@
+@model BookExchange.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Registracija";
+}
+
+<style>
+    .register-page {
+        min-height: calc(100vh - 130px);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 2.5rem 1rem 3rem;
+        background: linear-gradient(160deg, #FAF6F1 0%, #EDE0CC 100%);
+    }
+
+    .register-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 10px 48px rgba(44, 26, 14, 0.13);
+        padding: 2.5rem 2.5rem 2rem;
+        width: 100%;
+        max-width: 520px;
+        border-top: 5px solid #6B3A2A;
+    }
+
+    .register-icon {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, #6B3A2A, #C8956C);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        margin: 0 auto 1.25rem;
+        box-shadow: 0 4px 14px rgba(107,58,42,0.22);
+    }
+
+    .register-title {
+        color: #2C1A0E;
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 0.25rem;
+        font-weight: bold;
+    }
+
+    .register-subtitle {
+        color: #8B7355;
+        text-align: center;
+        font-size: 0.875rem;
+        margin-bottom: 1.75rem;
+        font-family: sans-serif;
+    }
+
+    .be-label {
+        color: #4A2E1A;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        font-family: sans-serif;
+        display: block;
+    }
+
+    .be-input {
+        width: 100%;
+        border: 1.5px solid #E0CDB5;
+        border-radius: 9px;
+        padding: 0.62rem 1rem;
+        font-size: 0.93rem;
+        background-color: #FDFAF7;
+        color: #2C1A0E;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        font-family: sans-serif;
+        box-sizing: border-box;
+    }
+
+    .be-input:focus {
+        border-color: #6B3A2A;
+        box-shadow: 0 0 0 3px rgba(107, 58, 42, 0.1);
+        background-color: #fff;
+        outline: none;
+    }
+
+    .be-input::placeholder { color: #BBA98A; }
+
+    .field-error {
+        color: #C0392B;
+        font-size: 0.78rem;
+        margin-top: 0.3rem;
+        font-family: sans-serif;
+        display: block;
+    }
+
+    .alert-error {
+        background-color: #FFF1F0;
+        border: 1px solid #FFCAC8;
+        border-radius: 9px;
+        color: #B03030;
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+        margin-bottom: 1.25rem;
+        font-family: sans-serif;
+    }
+
+    .alert-error ul { margin: 0; padding-left: 1.1rem; }
+
+    .section-label {
+        color: #4A2E1A;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        font-family: sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .genre-counter {
+        background: #F0E6D3;
+        color: #8B7355;
+        border-radius: 10px;
+        padding: 0.1rem 0.55rem;
+        font-size: 0.78rem;
+        font-family: sans-serif;
+        font-weight: normal;
+    }
+
+    .genre-counter.at-max {
+        background: #6B3A2A;
+        color: #F0E6D3;
+    }
+
+    .genre-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+    .genre-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem 0.85rem;
+        border: 1.5px solid #E0CDB5;
+        border-radius: 8px;
+        background: #FDFAF7;
+        cursor: pointer;
+        transition: all 0.18s;
+        font-family: sans-serif;
+        font-size: 0.875rem;
+        color: #4A2E1A;
+        user-select: none;
+    }
+
+    .genre-chip:hover {
+        border-color: #C8956C;
+        background: #FDF5EC;
+    }
+
+    .genre-chip.selected {
+        border-color: #6B3A2A;
+        background: linear-gradient(135deg, #F7EDE3, #F0E0CE);
+        color: #2C1A0E;
+        font-weight: 600;
+    }
+
+    .genre-chip.disabled-chip {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    .genre-chip input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: #6B3A2A;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .field-mb { margin-bottom: 1.1rem; }
+
+    .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.1rem;
+    }
+
+    .btn-submit {
+        width: 100%;
+        background: linear-gradient(135deg, #6B3A2A, #8B4C35);
+        border: none;
+        border-radius: 9px;
+        color: white;
+        padding: 0.78rem;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: sans-serif;
+        margin-top: 1.25rem;
+    }
+
+    .btn-submit:hover {
+        background: linear-gradient(135deg, #5A2F20, #7A3D27);
+        transform: translateY(-1px);
+        box-shadow: 0 5px 16px rgba(107, 58, 42, 0.3);
+    }
+
+    .card-divider {
+        border: none;
+        border-top: 1px solid #EDE0CC;
+        margin: 1.5rem 0 1.25rem;
+    }
+
+    .login-prompt {
+        text-align: center;
+        color: #8B7355;
+        font-size: 0.875rem;
+        font-family: sans-serif;
+    }
+
+    .login-prompt a {
+        color: #6B3A2A;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .login-prompt a:hover { text-decoration: underline; }
+
+    @@media (max-width: 480px) {
+        .two-col { grid-template-columns: 1fr; }
+        .genre-grid { grid-template-columns: 1fr; }
+        .register-card { padding: 2rem 1.5rem; }
+    }
+</style>
+
+<div class="register-page">
+    <div class="register-card">
+        <div class="register-icon">&#128218;</div>
+        <h1 class="register-title">Kreiraj nalog</h1>
+        <p class="register-subtitle">Pridruži se zajednici ljubitelja knjiga</p>
+
+        <div asp-validation-summary="All" class="alert-error"></div>
+
+        <form asp-action="Register" method="post" novalidate>
+
+            <div class="two-col">
+                <div>
+                    <label asp-for="Ime" class="be-label">Ime</label>
+                    <input asp-for="Ime" class="be-input" placeholder="Marko" />
+                    <span asp-validation-for="Ime" class="field-error"></span>
+                </div>
+                <div>
+                    <label asp-for="Prezime" class="be-label">Prezime</label>
+                    <input asp-for="Prezime" class="be-input" placeholder="Marković" />
+                    <span asp-validation-for="Prezime" class="field-error"></span>
+                </div>
+            </div>
+
+            <div class="field-mb">
+                <label asp-for="Email" class="be-label">Email adresa</label>
+                <input asp-for="Email" class="be-input" placeholder="tvoj@email.com" autocomplete="email" />
+                <span asp-validation-for="Email" class="field-error"></span>
+            </div>
+
+            <div class="field-mb">
+                <label asp-for="Lozinka" class="be-label">Lozinka</label>
+                <input asp-for="Lozinka" type="password" class="be-input" placeholder="Minimum 6 karaktera" autocomplete="new-password" />
+                <span asp-validation-for="Lozinka" class="field-error"></span>
+            </div>
+
+            <div class="field-mb">
+                <label asp-for="Grad" class="be-label">Grad</label>
+                <input asp-for="Grad" class="be-input" placeholder="Beograd, Novi Sad..." />
+                <span asp-validation-for="Grad" class="field-error"></span>
+            </div>
+
+            <div style="margin-bottom:0.5rem">
+                <div class="section-label">
+                    Omiljeni žanrovi
+                    <span class="genre-counter" id="genreCounter">0 / 3</span>
+                </div>
+                <div class="genre-grid" id="genreGrid">
+                    @foreach (var zanr in ViewBag.Zanrovi as List<string>)
+                    {
+                        <label class="genre-chip">
+                            <input type="checkbox"
+                                   name="OmiljeniZanrovi"
+                                   value="@zanr"
+                                   class="zanr-check" />
+                            @zanr
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Registruj se</button>
+        </form>
+
+        <hr class="card-divider" />
+
+        <p class="login-prompt">
+            Već imaš nalog? <a asp-action="Login">Prijavi se</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        const checkboxes = document.querySelectorAll('.zanr-check');
+        const counter = document.getElementById('genreCounter');
+
+        function updateCounter() {
+            const checked = document.querySelectorAll('.zanr-check:checked').length;
+            counter.textContent = checked + ' / 3';
+            counter.classList.toggle('at-max', checked >= 3);
+
+            checkboxes.forEach(cb => {
+                const chip = cb.closest('.genre-chip');
+                if (!cb.checked && checked >= 3) {
+                    chip.classList.add('disabled-chip');
+                    cb.disabled = true;
+                } else {
+                    chip.classList.remove('disabled-chip');
+                    cb.disabled = false;
+                }
+                chip.classList.toggle('selected', cb.checked);
+            });
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateCounter);
+            cb.closest('.genre-chip').addEventListener('click', function(e) {
+                if (e.target.tagName !== 'INPUT') return;
+            });
+        });
+
+        // Restore state on validation failure
+        updateCounter();
+    </script>
+}
