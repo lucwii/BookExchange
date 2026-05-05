@@ -21,4 +21,4 @@ public class Book
     public string VlasnikGrad { get; set; } = string.Empty;
     public DateTime DatumObjave { get; set; } = DateTime.UtcNow;
     public DateTime? DatumIzmene { get; set; }
-}git
+}
