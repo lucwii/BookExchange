@@ -1,0 +1,76 @@
+@model List<BookExchange.Models.ExchangeRequest>
+
+@{
+    ViewData["Title"] = "Zahtevi za moje knjige";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">📬 Zahtevi za moje knjige</h2>
+
+    @if (TempData["Uspeh"] != null)
+    {
+        <div class="alert alert-success">@TempData["Uspeh"]</div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Greska"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Nemaš nijednog zahteva.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Knjiga</th>
+                    <th>Pošiljalac</th>
+                    <th>Datum</th>
+                    <th>Status</th>
+                    <th>Akcija</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var z in Model)
+                {
+                    <tr>
+                        <td>@z.KnjigaNaslov</td>
+                        <td>@z.PosiljacIme</td>
+                        <td>@z.DatumSlanja.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>
+                            @if (z.Status == "Prihvaćen")
+                            {
+                                <span class="badge bg-success">@z.Status</span>
+                            }
+                            else if (z.Status == "Odbijen")
+                            {
+                                <span class="badge bg-danger">@z.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">@z.Status</span>
+                            }
+                        </td>
+                        <td>
+                            @if (z.Status == "Na čekanju")
+                            {
+                                <form method="post" asp-action="Accept" asp-route-id="@z.Id" class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm">✔ Prihvati</button>
+                                </form>
+                                <form method="post" asp-action="Reject" asp-route-id="@z.Id" class="d-inline ms-1">
+                                    <button type="submit" class="btn btn-danger btn-sm">✘ Odbij</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
