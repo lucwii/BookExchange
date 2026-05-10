@@ -1,0 +1,64 @@
+@model List<BookExchange.Models.ExchangeRequest>
+
+@{
+    ViewData["Title"] = "Moji zahtevi";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">📋 Moji poslati zahtevi</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Nisi poslao nijedan zahtev.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Knjiga</th>
+                    <th>Datum slanja</th>
+                    <th>Status</th>
+                    <th>Obaveštenje</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var z in Model)
+                {
+                    <tr>
+                        <td>@z.KnjigaNaslov</td>
+                        <td>@z.DatumSlanja.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>
+                            @if (z.Status == "Prihvaćen")
+                            {
+                                <span class="badge bg-success">@z.Status</span>
+                            }
+                            else if (z.Status == "Odbijen")
+                            {
+                                <span class="badge bg-danger">@z.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">@z.Status</span>
+                            }
+                        </td>
+                        <td>
+                            @if (z.PosiljacObavesten && z.Status == "Prihvaćen")
+                            {
+                                <span class="text-success fw-bold">✔ Tvoj zahtev je prihvaćen!</span>
+                            }
+                            else if (z.PosiljacObavesten && z.Status == "Odbijen")
+                            {
+                                <span class="text-danger fw-bold">✘ Tvoj zahtev je odbijen.</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Čeka se odgovor...</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
