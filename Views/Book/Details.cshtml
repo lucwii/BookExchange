@@ -1,0 +1,76 @@
+@model BookExchange.Models.Book
+
+@{
+    ViewData["Title"] = Model.Naslov;
+}
+
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-md-4 text-center">
+            @if (!string.IsNullOrEmpty(Model.SlikaPath))
+            {
+                <img src="@Model.SlikaPath" alt="@Model.Naslov"
+                     class="img-fluid rounded shadow" style="max-height: 400px; object-fit: cover;" />
+            }
+            else
+            {
+                <div class="bg-secondary rounded d-flex align-items-center justify-content-center"
+                     style="height: 300px;">
+                    <span class="text-white fs-1">📖</span>
+                </div>
+            }
+        </div>
+
+        <div class="col-md-8">
+            <h2 class="fw-bold">@Model.Naslov</h2>
+            <p class="text-muted fs-5">✍️ @Model.Autor</p>
+
+            <hr />
+
+            <ul class="list-unstyled">
+                <li class="mb-2">
+                    <strong>Žanr:</strong>
+                    <span class="badge bg-primary ms-1">@Model.Zanr</span>
+                </li>
+                <li class="mb-2">
+                    <strong>Stanje:</strong>
+                    @if (Model.IsNovo)
+                    {
+                        <span class="badge bg-success ms-1">Novo</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark ms-1">Polovno</span>
+                    }
+                </li>
+                <li class="mb-3">
+                    <strong>Opis:</strong>
+                    <p class="mt-1">@Model.Opis</p>
+                </li>
+            </ul>
+
+            <hr />
+
+            <h5 class="fw-bold">👤 Info o vlasniku</h5>
+            <ul class="list-unstyled">
+                <li><strong>Ime:</strong> @Model.VlasnikIme</li>
+                <li><strong>Grad:</strong> @Model.VlasnikGrad</li>
+                <li><strong>Email:</strong> @Model.VlasnikEmail</li>
+            </ul>
+
+            <div class="mt-4">
+                <form asp-controller="Request" asp-action="SendRequest" method="post">
+                    <input type="hidden" name="bookId" value="@Model.Id" />
+                    <input type="hidden" name="vlasnikId" value="@Model.VlasnikId" />
+                    <button type="submit" class="btn btn-success btn-lg me-2">
+                        📩 Pošalji zahtev
+                    </button>
+                </form>
+            </div>
+
+            <div class="mt-3">
+                <a asp-action="Index" class="btn btn-outline-secondary">← Nazad</a>
+            </div>
+        </div>
+    </div>
+</div>
