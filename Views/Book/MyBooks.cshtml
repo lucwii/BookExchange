@@ -1,0 +1,93 @@
+@model List<BookExchange.Models.Book>
+
+@{
+    ViewData["Title"] = "Moje knjige";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">📚 Moje knjige</h2>
+        <a asp-action="Create" class="btn btn-primary">+ Ponudi novu knjigu</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            Još niste oglasili nijednu knjigu.
+            <a asp-action="Create" class="alert-link ms-1">Dodajte prvu!</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Slika</th>
+                        <th>Naslov</th>
+                        <th>Autor</th>
+                        <th>Žanr</th>
+                        <th>Stanje</th>
+                        <th>Datum objave</th>
+                        <th>Datum izmene</th>
+                        <th>Akcije</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var book in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(book.SlikaPath))
+                                {
+                                    <img src="@book.SlikaPath" alt="@book.Naslov"
+                                         style="width: 60px; height: 60px; object-fit: cover;"
+                                         class="rounded" />
+                                }
+                                else
+                                {
+                                    <span class="fs-3">📖</span>
+                                }
+                            </td>
+                            <td class="fw-semibold">@book.Naslov</td>
+                            <td>@book.Autor</td>
+                            <td><span class="badge bg-primary">@book.Zanr</span></td>
+                            <td>
+                                @if (book.IsNovo)
+                                {
+                                    <span class="badge bg-success">Novo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Polovno</span>
+                                }
+                            </td>
+                            <td class="text-muted small">
+                                @book.DatumObjave.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                            </td>
+                            <td class="text-muted small">
+                                @if (book.DatumIzmene.HasValue)
+                                {
+                                    @book.DatumIzmene.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                                }
+                                else
+                                {
+                                    <span class="text-secondary">—</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@book.Id"
+                                   class="btn btn-sm btn-outline-primary me-1">Izmeni</a>
+                                <form asp-action="Delete" asp-route-id="@book.Id"
+                                      method="post" style="display:inline"
+                                      onsubmit="return confirm('Da li ste sigurni da želite da obrišete ovu knjigu?')">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Obriši</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
