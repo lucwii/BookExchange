@@ -1,0 +1,51 @@
+@model List<BookExchange.Models.Book>
+
+@{
+    ViewData["Title"] = "Dostupne knjige";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">📚 Dostupne knjige</h2>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            Trenutno nema dostupnih knjiga.
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var book in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(book.SlikaPath))
+                        {
+                            <img src="@book.SlikaPath" class="card-img-top" alt="@book.Naslov"
+                                 style="height: 220px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="bg-secondary d-flex align-items-center justify-content-center"
+                                 style="height: 220px;">
+                                <span class="text-white fs-1">📖</span>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">@book.Naslov</h5>
+                            <p class="card-text text-muted mb-1">✍️ @book.Autor</p>
+                            <p class="card-text text-muted small">👤 @book.VlasnikIme</p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a asp-action="Details" asp-route-id="@book.Id"
+                               class="btn btn-primary w-100">Pogledaj detalje</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
