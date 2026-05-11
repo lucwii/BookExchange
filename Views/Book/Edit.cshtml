@@ -1,0 +1,87 @@
+@model BookExchange.Models.Book
+
+@{
+    ViewData["Title"] = "Izmeni knjigu";
+    var zanrovi = ViewBag.Zanrovi as List<string>;
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <h2 class="fw-bold mb-4">✏️ Izmeni knjigu</h2>
+
+            <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-muted small">ID</label>
+                    <input asp-for="Id" class="form-control" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Naslov" class="form-label fw-semibold">Naslov</label>
+                    <input asp-for="Naslov" class="form-control" required />
+                    <span asp-validation-for="Naslov" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Autor" class="form-label fw-semibold">Autor</label>
+                    <input asp-for="Autor" class="form-control" required />
+                    <span asp-validation-for="Autor" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Zanr" class="form-label fw-semibold">Žanr</label>
+                    <select asp-for="Zanr" class="form-select" required>
+                        <option value="">-- Izaberite žanr --</option>
+                        @foreach (var zanr in zanrovi!)
+                        {
+                            <option value="@zanr" selected="@(zanr == Model.Zanr)">@zanr</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Zanr" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Stanje knjige</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="IsNovo"
+                                   id="novo" value="true" @(Model.IsNovo ? "checked" : "") />
+                            <label class="form-check-label" for="novo">Novo</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="IsNovo"
+                                   id="polovno" value="false" @(!Model.IsNovo ? "checked" : "") />
+                            <label class="form-check-label" for="polovno">Polovno</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Opis" class="form-label fw-semibold">Opis</label>
+                    <textarea asp-for="Opis" class="form-control" rows="4" required></textarea>
+                    <span asp-validation-for="Opis" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Trenutna slika</label>
+                    @if (!string.IsNullOrEmpty(Model.SlikaPath))
+                    {
+                        <div class="mb-2">
+                            <img src="@Model.SlikaPath" alt="Trenutna slika"
+                                 style="height: 120px; object-fit: cover;" class="rounded border" />
+                        </div>
+                    }
+                    <label class="form-label text-muted small">Promeni sliku (opciono)</label>
+                    <input type="file" name="slika" class="form-control" accept="image/*" />
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary px-4">Sačuvaj izmene</button>
+                    <a asp-action="MyBooks" class="btn btn-outline-secondary">Otkaži</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
