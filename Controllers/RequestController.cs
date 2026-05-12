@@ -17,35 +17,35 @@ public class RequestController : Controller
 
     // Slanje zahteva za knjigu
     [HttpPost]
-    public async Task<IActionResult> Send(string knjigaId)
+    public async Task<IActionResult> SendRequest(string bookId)
     {
         var posiljacId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var posiljacIme = User.FindFirst(ClaimTypes.Name)?.Value;
 
-        var knjiga = await _db.Books.Find(b => b.Id == knjigaId).FirstOrDefaultAsync();
+        var knjiga = await _db.Books.Find(b => b.Id == bookId).FirstOrDefaultAsync();
         if (knjiga == null) return NotFound();
 
         // Ne mozes poslati zahtev za svoju knjigu
         if (knjiga.VlasnikId == posiljacId)
         {
             TempData["Greska"] = "Ne možeš poslati zahtev za svoju knjigu.";
-            return RedirectToAction("Details", "Book", new { id = knjigaId });
+            return RedirectToAction("Details", "Book", new { id = bookId });
         }
 
         // Provera da li vec postoji zahtev
         var postojeci = await _db.ExchangeRequest
-            .Find(r => r.KnjigaId == knjigaId && r.PosiljacId == posiljacId)
+            .Find(r => r.KnjigaId == bookId && r.PosiljacId == posiljacId)
             .FirstOrDefaultAsync();
 
         if (postojeci != null)
         {
             TempData["Greska"] = "Već si poslao zahtev za ovu knjigu.";
-            return RedirectToAction("Details", "Book", new { id = knjigaId });
+            return RedirectToAction("Details", "Book", new { id = bookId });
         }
 
         var zahtev = new ExchangeRequest
         {
-            KnjigaId = knjigaId,
+            KnjigaId = bookId,
             KnjigaNaslov = knjiga.Naslov,
             PosiljacId = posiljacId!,
             PosiljacIme = posiljacIme!,
@@ -56,7 +56,7 @@ public class RequestController : Controller
 
         await _db.ExchangeRequest.InsertOneAsync(zahtev);
         TempData["Uspeh"] = "Zahtev je uspešno poslat!";
-        return RedirectToAction("Details", "Book", new { id = knjigaId });
+        return RedirectToAction("Details", "Book", new { id = bookId });
     }
 
     // Lista zahteva za knjige ulogovanog korisnika (vlasnik vidi zahteve)
