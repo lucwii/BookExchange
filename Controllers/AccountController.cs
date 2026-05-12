@@ -28,7 +28,7 @@ public class AccountController : Controller
     {
         if (User.Identity?.IsAuthenticated == true)
         {
-            return RedirectToAction("Index", "Books");
+            return RedirectToAction("Index", "Book");
         }
 
         return View();
@@ -50,7 +50,7 @@ public class AccountController : Controller
         }
 
         await SignInUser(user);
-        return RedirectToAction("Index", "Books");
+        return RedirectToAction("Index", "Book");
     }
 
     public IActionResult Register()
@@ -94,7 +94,7 @@ public class AccountController : Controller
 
         await _db.Users.InsertOneAsync(user);
         await SignInUser(user);
-        return RedirectToAction("Index", "Books");
+        return RedirectToAction("Index", "Book");
     }
 
     public async Task<IActionResult> Logout()
