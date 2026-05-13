@@ -4,72 +4,227 @@
     ViewData["Title"] = Model.Naslov;
 }
 
-<div class="container py-4">
-    <div class="row g-4">
-        <div class="col-md-4 text-center">
-            @if (!string.IsNullOrEmpty(Model.SlikaPath))
-            {
-                <img src="/Book/Image/@Model.SlikaPath" alt="@Model.Naslov"
-                     class="img-fluid rounded shadow" style="max-height: 400px; object-fit: cover;" />
-            }
-            else
-            {
-                <div class="bg-secondary rounded d-flex align-items-center justify-content-center"
-                     style="height: 300px;">
-                    <span class="text-white fs-1">📖</span>
-                </div>
-            }
-        </div>
+<style>
+    .details-wrapper {
+        background: #FAF6F1;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 24px rgba(44, 26, 14, 0.10);
+    }
 
-        <div class="col-md-8">
-            <h2 class="fw-bold">@Model.Naslov</h2>
-            <p class="text-muted fs-5">✍️ @Model.Autor</p>
+    .details-img-col {
+        background: #EDE0D0;
+        min-height: 420px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
 
-            <hr />
+    .details-info-col {
+        padding: 2.5rem 2rem;
+    }
 
-            <ul class="list-unstyled">
-                <li class="mb-2">
-                    <strong>Žanr:</strong>
-                    <span class="badge bg-primary ms-1">@Model.Zanr</span>
-                </li>
-                <li class="mb-2">
-                    <strong>Stanje:</strong>
-                    @if (Model.IsNovo)
-                    {
-                        <span class="badge bg-success ms-1">Novo</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-warning text-dark ms-1">Polovno</span>
-                    }
-                </li>
-                <li class="mb-3">
-                    <strong>Opis:</strong>
-                    <p class="mt-1">@Model.Opis</p>
-                </li>
-            </ul>
+    .book-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #2C1A0E;
+        line-height: 1.25;
+    }
 
-            <hr />
+    .book-author {
+        color: #6B3A2A;
+        font-size: 1.05rem;
+        margin-top: 0.25rem;
+    }
 
-            <h5 class="fw-bold">👤 Info o vlasniku</h5>
-            <ul class="list-unstyled">
-                <li><strong>Ime:</strong> @Model.VlasnikIme</li>
-                <li><strong>Grad:</strong> @Model.VlasnikGrad</li>
-                <li><strong>Email:</strong> @Model.VlasnikEmail</li>
-            </ul>
+    .detail-divider {
+        border-color: #DDD0BE;
+        margin: 1.25rem 0;
+    }
 
-            <div class="mt-4">
-                <form asp-controller="Request" asp-action="SendRequest" method="post">
-                    <input type="hidden" name="bookId" value="@Model.Id" />
-                    <input type="hidden" name="vlasnikId" value="@Model.VlasnikId" />
-                    <button type="submit" class="btn btn-success btn-lg me-2">
-                        📩 Pošalji zahtev
-                    </button>
-                </form>
+    .detail-row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 0.65rem;
+        font-size: 0.95rem;
+        color: #3D2010;
+    }
+
+    .detail-label {
+        color: #8C6A50;
+        font-size: 0.82rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.15rem;
+    }
+
+    .detail-pill {
+        display: inline-block;
+        padding: 0.2rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        background: rgba(200, 149, 108, 0.18);
+        color: #4A2A18;
+        border: 1px solid rgba(200, 149, 108, 0.4);
+    }
+
+    .detail-pill.stanje-novo {
+        background: rgba(74, 42, 24, 0.08);
+        color: #2C1A0E;
+        border-color: rgba(74, 42, 24, 0.25);
+    }
+
+    .detail-pill.stanje-polovno {
+        background: rgba(200, 149, 108, 0.12);
+        color: #6B3A2A;
+        border-color: rgba(200, 149, 108, 0.3);
+    }
+
+    .opis-text {
+        color: #4A3020;
+        line-height: 1.7;
+        font-size: 0.97rem;
+    }
+
+    .owner-block {
+        background: rgba(200, 149, 108, 0.10);
+        border-radius: 10px;
+        padding: 1rem 1.2rem;
+        border: 1px solid rgba(200, 149, 108, 0.2);
+    }
+
+    .owner-name {
+        font-weight: 700;
+        color: #2C1A0E;
+        font-size: 1rem;
+    }
+
+    .owner-meta {
+        font-size: 0.87rem;
+        color: #6B3A2A;
+        margin-top: 0.15rem;
+    }
+
+    .btn-send {
+        background: #4A2A18;
+        color: #F0E6D3;
+        border: none;
+        border-radius: 8px;
+        padding: 0.6rem 1.6rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+
+    .btn-send:hover {
+        background: #6B3A2A;
+        color: #F0E6D3;
+    }
+
+    .btn-back {
+        color: #6B3A2A;
+        border-color: #C8956C;
+        border-radius: 8px;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.95rem;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-back:hover {
+        background: #4A2A18;
+        color: #F0E6D3;
+        border-color: #4A2A18;
+    }
+
+    .no-img-placeholder {
+        width: 100%;
+        height: 300px;
+        border-radius: 12px;
+        background: #DDD0BE;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="details-wrapper">
+        <div class="row g-0">
+
+            <div class="col-md-4 details-img-col">
+                @if (!string.IsNullOrEmpty(Model.SlikaPath))
+                {
+                    <img src="/Book/Image/@Model.SlikaPath" alt="@Model.Naslov"
+                         class="img-fluid rounded-3 shadow-sm"
+                         style="max-height: 380px; object-fit: cover;" />
+                }
+                else
+                {
+                    <div class="no-img-placeholder">📖</div>
+                }
             </div>
 
-            <div class="mt-3">
-                <a asp-action="Index" class="btn btn-outline-secondary">← Nazad</a>
+            <div class="col-md-8 details-info-col">
+
+                <div class="detail-label">Knjiga</div>
+                <h1 class="book-title">@Model.Naslov</h1>
+                <p class="book-author">@Model.Autor</p>
+
+                <hr class="detail-divider" />
+
+                <div class="d-flex gap-4 mb-3">
+                    <div>
+                        <div class="detail-label">Žanr</div>
+                        <span class="detail-pill">@Model.Zanr</span>
+                    </div>
+                    <div>
+                        <div class="detail-label">Stanje</div>
+                        @if (Model.IsNovo)
+                        {
+                            <span class="detail-pill stanje-novo">Novo</span>
+                        }
+                        else
+                        {
+                            <span class="detail-pill stanje-polovno">Polovno</span>
+                        }
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Opis))
+                {
+                    <div class="detail-label mb-1">Opis</div>
+                    <p class="opis-text">@Model.Opis</p>
+                }
+
+                <hr class="detail-divider" />
+
+                <div class="detail-label mb-2">Vlasnik</div>
+                <div class="owner-block">
+                    <div class="owner-name">@Model.VlasnikIme</div>
+                    <div class="owner-meta">
+                        @if (!string.IsNullOrEmpty(Model.VlasnikGrad))
+                        {
+                            <span>@Model.VlasnikGrad</span>
+                            <span class="mx-1">·</span>
+                        }
+                        <span>@Model.VlasnikEmail</span>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 mt-4">
+                    <form asp-controller="Request" asp-action="SendRequest" method="post">
+                        <input type="hidden" name="bookId" value="@Model.Id" />
+                        <input type="hidden" name="vlasnikId" value="@Model.VlasnikId" />
+                        <button type="submit" class="btn btn-send">Pošalji zahtev</button>
+                    </form>
+                    <a asp-action="Index" class="btn btn-outline btn-back">← Nazad</a>
+                </div>
+
             </div>
         </div>
     </div>
