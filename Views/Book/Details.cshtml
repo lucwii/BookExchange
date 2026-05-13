@@ -9,7 +9,7 @@
         <div class="col-md-4 text-center">
             @if (!string.IsNullOrEmpty(Model.SlikaPath))
             {
-                <img src="@Model.SlikaPath" alt="@Model.Naslov"
+                <img src="/Book/Image/@Model.SlikaPath" alt="@Model.Naslov"
                      class="img-fluid rounded shadow" style="max-height: 400px; object-fit: cover;" />
             }
             else

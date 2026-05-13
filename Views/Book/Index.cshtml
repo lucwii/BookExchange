@@ -24,7 +24,7 @@
                     <div class="card h-100 shadow-sm">
                         @if (!string.IsNullOrEmpty(book.SlikaPath))
                         {
-                            <img src="@book.SlikaPath" class="card-img-top" alt="@book.Naslov"
+                            <img src="/Book/Image/@book.SlikaPath" class="card-img-top" alt="@book.Naslov"
                                  style="height: 220px; object-fit: cover;" />
                         }
                         else
