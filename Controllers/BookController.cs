@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using BookExchange.Models;
 using BookExchange.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
@@ -61,13 +62,10 @@ public class BookController : Controller
         
         if (slika != null && slika.Length > 0)
         {
-            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
-            Directory.CreateDirectory(uploadsFolder);
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(slika.FileName)}";
-            var filePath = Path.Combine(uploadsFolder, fileName);
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await slika.CopyToAsync(stream);
-            model.SlikaPath = $"/uploads/{fileName}";
+            using var stream = slika.OpenReadStream();
+            var fileId = await _db.GridFS.UploadFromStreamAsync(fileName, stream);
+            model.SlikaPath = fileId.ToString(); // čuvamo ID slike
         }
 
         await _db.Books.InsertOneAsync(model);
@@ -111,13 +109,16 @@ public class BookController : Controller
 
         if (slika != null && slika.Length > 0)
         {
-            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
-            Directory.CreateDirectory(uploadsFolder);
+            if (!string.IsNullOrEmpty(postojecaKnjiga.SlikaPath) &&
+                MongoDB.Bson.ObjectId.TryParse(postojecaKnjiga.SlikaPath, out var oldId))
+            {
+                try { await _db.GridFS.DeleteAsync(oldId); } catch { }
+            }
+
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(slika.FileName)}";
-            var filePath = Path.Combine(uploadsFolder, fileName);
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await slika.CopyToAsync(stream);
-            postojecaKnjiga.SlikaPath = $"/uploads/{fileName}";
+            using var stream = slika.OpenReadStream();
+            var fileId = await _db.GridFS.UploadFromStreamAsync(fileName, stream);
+            postojecaKnjiga.SlikaPath = fileId.ToString();
         }
 
         await _db.Books.ReplaceOneAsync(b => b.Id == id, postojecaKnjiga);
@@ -130,5 +131,28 @@ public class BookController : Controller
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         await _db.Books.DeleteOneAsync(b => b.Id == id && b.VlasnikId == userId);
         return RedirectToAction("MyBooks");
+    }
+    
+    [AllowAnonymous]
+    public async Task<IActionResult> Image(string id)
+    {
+        try
+        {
+            var objectId = new MongoDB.Bson.ObjectId(id);
+            var stream = await _db.GridFS.OpenDownloadStreamAsync(objectId);
+            var ext = Path.GetExtension(stream.FileInfo.Filename).ToLowerInvariant();
+            var contentType = ext switch
+            {
+                ".png"  => "image/png",
+                ".gif"  => "image/gif",
+                ".webp" => "image/webp",
+                _       => "image/jpeg"
+            };
+            return File(stream, contentType);
+        }
+        catch
+        {
+            return NotFound();
+        }
     }
 }
