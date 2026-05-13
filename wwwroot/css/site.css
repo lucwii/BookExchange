@@ -9,7 +9,33 @@ html {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #C8956C;
+}
+
+.btn-primary {
+    --bs-btn-color: #F0E6D3;
+    --bs-btn-bg: #4A2A18;
+    --bs-btn-border-color: #4A2A18;
+    --bs-btn-hover-color: #F0E6D3;
+    --bs-btn-hover-bg: #6B3A2A;
+    --bs-btn-hover-border-color: #6B3A2A;
+    --bs-btn-active-color: #F0E6D3;
+    --bs-btn-active-bg: #2C1A0E;
+    --bs-btn-active-border-color: #2C1A0E;
+    --bs-btn-disabled-color: #F0E6D3;
+    --bs-btn-disabled-bg: #4A2A18;
+    --bs-btn-disabled-border-color: #4A2A18;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: #4A2A18;
+    --bs-btn-border-color: #4A2A18;
+    --bs-btn-hover-color: #F0E6D3;
+    --bs-btn-hover-bg: #4A2A18;
+    --bs-btn-hover-border-color: #4A2A18;
+    --bs-btn-active-color: #F0E6D3;
+    --bs-btn-active-bg: #4A2A18;
+    --bs-btn-active-border-color: #4A2A18;
 }
 
 html {
